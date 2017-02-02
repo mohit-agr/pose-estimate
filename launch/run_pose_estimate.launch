@@ -1,10 +1,13 @@
 <launch>
 	<arg name="master" default="ibis" />
 	<arg name="slave" default="elster" />
+	<arg name="origin" default="world" />
 
 	<node pkg="pose_estimate" name="pose_$(arg master)_$(arg slave)" type="pose_estimate_node" output="screen">
 		<param name="parent_frame" value="$(arg master)" />
 		<param name="child_frame" value="$(arg slave)" />
+		<param name="origin_frame" value="$(arg origin)" />
+		
 		<remap from="/pose" to="/p_$(arg master)_$(arg slave)" />
 		<remap from="/stampedTF" to="T_$(arg master)_$(arg slave)" />
 	</node>

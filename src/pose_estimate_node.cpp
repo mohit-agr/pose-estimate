@@ -9,13 +9,15 @@ int main(int argc, char** argv) {
 	ros::NodeHandle nh;
 	ros::NodeHandle nhp("~");
 
-	std::string parent_, child_;
+	std::string parent_, child_, origin_;
 
 	parent_ = "/master";
 	child_ = "/slave";
+	origin_ = "/world";
 
 	nhp.param("parent_frame", parent_, parent_);	
 	nhp.param("child_frame", child_, child_);
+	nhp.param("origin_frame", origin_, origin_);
 
 	ros::Publisher sTF_pub = nh.advertise<geometry_msgs::TransformStamped>("/stampedTF", 10);
 	ros::Publisher pose_pub = nh.advertise<geometry_msgs::Transform>("/pose", 10);
@@ -28,8 +30,8 @@ int main(int argc, char** argv) {
 	while(nh.ok()) {
 		tf::StampedTransform T_W_mtr, T_W_slv, T_mtr_slv;
 		try {
-			Lnr_W_mtr.lookupTransform("/world", parent_, ros::Time(0), T_W_mtr);
-			Lnr_W_slv.lookupTransform("/world", child_, ros::Time(0), T_W_slv);
+			Lnr_W_mtr.lookupTransform(origin_, parent_, ros::Time(0), T_W_mtr);
+			Lnr_W_slv.lookupTransform(origin_, child_, ros::Time(0), T_W_slv);
 		} catch (tf::TransformException &ex) {
 		    ROS_ERROR("%s",ex.what());
 		    ros::Duration(1.0).sleep();
